@@ -1,5 +1,5 @@
 <template>
-  <el-scrollbar>
+  <el-scrollbar class="scrollbar" ref="scrollbar">
     <el-menu
       :collapse="menuStore.asideCollapse"
       :collapse-transition="menuStore.asideTransition"
@@ -9,30 +9,32 @@
     >
       <sidebar-item :header="menuStore.aside" />
     </el-menu>
+    <div
+      v-if="menuStore.aside.length === 0 && !menuStore.asideCollapse"
+      class="layout-header-aside-menu-empty"
+      flex="dir:top main:center cross:center"
+    >
+      <i class="fa fa-inbox" />
+      <span>没有侧栏菜单</span>
+    </div>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useMenuStore } from "@/store";
 import { ElMessage } from "element-plus";
 import SidebarItem from "./SidebarItem.vue";
+import { onMounted, onBeforeUnmount, ref } from "vue";
+import {
+  addResizeListener,
+  removeResizeListener,
+} from "element-plus/lib/utils/dom/resize-event";
 
 const route = useRoute();
 const router = useRouter();
 const menuStore = useMenuStore();
-
-// watch(
-//   route,
-//   (val) => {
-//   const _side = menuAside.filter(menu => menu.path === matched[0].path)
-//           this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
-//   },
-//   {
-//     immediate: true,
-//   }
-// );
+const scrollbar = ref();
 
 const handleMenuSelect = (index: string) => {
   if (/^menu-empty-\d+$/.test(index) || index === undefined) {
@@ -57,4 +59,21 @@ function openUrl(url: string) {
     <HTMLElement>document.getElementById("admin-link-temp")
   );
 }
+
+onMounted(() => {
+  addResizeListener(scrollbar.value.$el, scrollbar.value.update);
+});
+
+onBeforeUnmount(() => {
+  removeResizeListener(scrollbar.value.$el, scrollbar.value.update);
+});
 </script>
+
+<style lang="scss">
+.d2-scrollbar {
+  height: 100%;
+  .el-scrollbar__wrap {
+    overflow: auto;
+  }
+}
+</style>

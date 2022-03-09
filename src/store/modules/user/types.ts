@@ -1,5 +1,5 @@
 export interface UserState {
-  user: object,
+  user: any,
   roles: Array<string>,
   loadMenus: boolean
 }

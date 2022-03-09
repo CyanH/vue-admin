@@ -1,17 +1,19 @@
+import Cookies from 'js-cookie'
+
 const isLogin = () => {
-  return !!localStorage.getItem('token');
+  return !!Cookies.get('token');
 };
 
 const getToken = () => {
-  return <string>localStorage.getItem('token');
+  return <string>Cookies.get('token');
 };
 
 const setToken = (token: string) => {
-  localStorage.setItem('token', token);
+  Cookies.set('token', token);
 };
 
 const clearToken = () => {
-  localStorage.removeItem('token');
+  Cookies.remove('token');
 };
 
 export { isLogin, getToken, setToken, clearToken };

@@ -4,6 +4,6 @@ export interface searchState {
     open: string,
     close: string
   },
-  pool: Array<object>
+  pool: Array<any>
 }
 

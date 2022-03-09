@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNorma
 import { isLogin } from '@/utils/auth';
 import { buildMenus } from '@/api/system/menu'
 import { filterAsyncRouter } from '@/store/modules/permission'
-import { useUserStore, permissionStore, useMenuStore } from '@/store';
+import { useUserStore, permissionStore, usePageStore } from '@/store';
 import NProgress from "nprogress"
 import "nprogress/nprogress.css"
 
@@ -56,8 +56,10 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-router.afterEach(() => {
+router.afterEach(to => {
   NProgress.done() // finish progress bar
+  const pageStore = usePageStore()
+  pageStore.open(to)
 })
 
 export const loadMenus = (next: NavigationGuardNext, to: RouteLocationNormalized) => {

@@ -10,3 +10,5 @@ declare module '*.vue' {
 declare module 'jsencrypt/bin/jsencrypt.min' { const content: any; export = content; }
 
 declare module 'js-cookie' { const content: any; export = content; }
+
+declare module 'vue-image-crop-upload' { const content: any; export = content; }

@@ -3,7 +3,6 @@
     flex="cross:center"
     class="theme-header-menu"
     :class="{ 'is-scrollable': isScroll }"
-    ref="page"
   >
     <div
       ref="contentRef"

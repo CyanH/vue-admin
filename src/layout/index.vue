@@ -50,6 +50,62 @@
           <header-user />
         </div>
       </div>
+      <!-- 下面 主体 -->
+      <div class="theme-container" flex-box="1" flex>
+        <!-- 主体 侧边栏 -->
+        <div
+          flex-box="0"
+          ref="aside"
+          :class="{
+            'theme-container-aside': true,
+            'theme-container-transition': menuStore.asideTransition,
+          }"
+          :style="{
+            width: menuStore.asideCollapse ? asideWidthCollapse : asideWidth,
+            opacity: searchStore.active ? 0.5 : 1,
+          }"
+        >
+          <menu-side />
+        </div>
+        <!-- 主体 -->
+        <div class="theme-container-main" flex-box="1" flex>
+          <!-- 搜索 -->
+          <transition name="fade-scale">
+            <div
+              v-if="searchStore.active"
+              class="theme-container-main-layer"
+              flex
+            >
+              <panel-search ref="searchRef" @close="searchPanelClose" />
+            </div>
+          </transition>
+          <!-- 内容 -->
+          <router-view :key="routerViewKey" v-slot="{ Component }">
+            <transition name="fade-scale">
+              <div
+                v-if="!searchStore.active"
+                class="theme-container-main-layer"
+                flex="dir:top"
+              >
+                <!-- tab -->
+                <div class="theme-container-main-header" flex-box="0">
+                  <tabs />
+                </div>
+                <!-- 页面 -->
+                <div class="theme-container-main-body" flex-box="1">
+                  <transition
+                    :name="transitionStore.active ? 'fade-transverse' : ''"
+                  >
+                    <keep-alive :include="pageStore.keepAlive">
+                      <component :is="Component" />
+                    </keep-alive>
+                  </transition>
+                </div>
+              </div>
+            </transition>
+          </router-view>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -62,26 +118,48 @@ import headerFullscreen from "./components/header-fullscreen/index.vue";
 import headerTheme from "./components/header-theme/index.vue";
 import headerUser from "./components/header-user/index.vue";
 import menuSide from "./components/menu-side/index.vue";
-import { useSearchStore, useMenuStore, useThemeStore } from "@/store";
+import panelSearch from "./components/panel-search/index.vue";
+import tabs from "./components/tabs/index.vue";
+import {
+  useSearchStore,
+  useMenuStore,
+  useThemeStore,
+  usePageStore,
+  useTransitionStore,
+} from "@/store";
+import { useRoute } from "vue-router";
 import hotkeys from "hotkeys-js";
 
 const baseUrl = <string>import.meta.env.BASE_URL;
 const searchStore = useSearchStore();
 const menuStore = useMenuStore();
 const themeStore = useThemeStore();
-const panelSearch = ref();
+const pageStore = usePageStore();
+const transitionStore = useTransitionStore();
+const route = useRoute();
+const searchRef = ref();
 
 // [侧边栏宽度] 正常状态
 let asideWidth = ref("200px");
 // [侧边栏宽度] 折叠状态
 let asideWidthCollapse = ref("65px");
 
+/**
+ * @description 用来实现带参路由的缓存
+ */
+const routerViewKey = () => {
+  // 默认情况下 key 类似 __transition-n-/foo
+  // 这里的字符串操作是为了最终 key 的格式和原来相同 类似 __transition-n-__stamp-time-/foo
+  const stamp = route.meta[`__stamp-${route.path}`] || "";
+  return `${stamp ? `__stamp-${stamp}-` : ""}${route.path}`;
+};
+
 const handleSearchClick = () => {
   searchStore.toggle();
   if (searchStore.active) {
     setTimeout(() => {
-      if (panelSearch.value) {
-        panelSearch.value.focus();
+      if (searchRef.value) {
+        searchRef.value.focus();
       }
     }, 500);
   }
@@ -91,8 +169,8 @@ const searchPanelOpen = () => {
   if (!searchStore.active) {
     searchStore.set(true);
     setTimeout(() => {
-      if (panelSearch.value) {
-        panelSearch.value.focus();
+      if (searchRef.value) {
+        searchRef.value.focus();
       }
     }, 500);
   }

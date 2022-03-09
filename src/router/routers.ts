@@ -36,33 +36,35 @@ const route = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/index',
     alwaysShow: true,
     meta: { title: '首页', icon: 'index', affix: true, noCache: true },
 
     children: [
       {
-        path: '/dashboard',
+        path: '/index',
         component: () => import('@/views/home.vue'),
-        name: 'Dashboard',
+        name: 'index',
         meta: { title: '首页', icon: 'index', affix: true, noCache: true }
       }
     ]
   },
-  // {
-  //   path: '/user',
-  //   component: Layout,
-  //   hidden: true,
-  //   redirect: 'noredirect',
-  //   children: [
-  //     {
-  //       path: 'center',
-  //       component: () => import('@/views/system/user/center.vue'),
-  //       name: '个人中心',
-  //       meta: { title: '个人中心' }
-  //     }
-  //   ]
-  // }
+  {
+    path: '/user',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'center',
+        component: () => import('@/views/system/user/center.vue'),
+        name: '个人中心',
+        meta: { title: '个人中心' }
+      }
+    ]
+  }
 ]
+// 导出需要显示菜单的
+export const frameInRoutes = route
 
 export default route

@@ -5,10 +5,12 @@
     }}</span>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>
-          <i class="fa fa-user" />
-          个人中心
-        </el-dropdown-item>
+        <router-link to="/user/center">
+          <el-dropdown-item>
+            <i class="fa fa-user" />
+            个人中心
+          </el-dropdown-item>
+        </router-link>
 
         <el-dropdown-item @click="logOut">
           <i class="fa fa-power-off" />
